@@ -6,7 +6,7 @@
 <p align="center">
   <a href="https://ahoos-ai.site/int-offline-studio">About the app</a> ·
   <a href="https://ahoos-ai.site/nimbus-2-apex-benchmarks.html">How the model was measured</a> ·
-  <a href="https://huggingface.co/AhoosAI/nimbus-2-apex">Model on Hugging Face</a>
+  <a href="https://huggingface.co/AhoosAI-Research/nimbus-2-apex">Model on Hugging Face</a>
 </p>
 
 ---

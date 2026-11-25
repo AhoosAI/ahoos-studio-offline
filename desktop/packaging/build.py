@@ -61,7 +61,7 @@ VERSION = __version__
 NAME = "AhoosAI Studio"
 
 # Nimbus 2 Apex's adapter, exactly as published on the Hub.
-APEX_GGUF_URL = "https://huggingface.co/AhoosAI/nimbus-2-apex/resolve/main/nimbus-2-apex.gguf"
+APEX_GGUF_URL = "https://huggingface.co/AhoosAI-Research/nimbus-2-apex/resolve/main/nimbus-2-apex.gguf"
 APEX_GGUF_BYTES = 174_622_368
 APEX_GGUF_SHA256 = "21e406daa25dd46f464b0c2204f9aca268f41ef74c1d046c767d67255a30a485"
 

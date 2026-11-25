@@ -474,18 +474,18 @@
     const theme = settingsOf().theme || 'system';
     top.innerHTML = `
       <button class="icon-btn" id="showSide" title="${t('toggle_sidebar')} (Ctrl+B)">${ic('sidebar')}</button>
-      <button class="picker" id="picker" aria-haspopup="menu" aria-expanded="false">
+      <span class="picker-src" hidden>
         <span class="nm" dir="auto">${esc(st.profile.name)}</span>
         ${st.profile.online ? `<span class="q">${ic('globe', 'sm')}${esc(st.profile.base)}</span>`
           : base && base.quant ? `<span class="q ltr">${esc(base.quant)}</span>` : ''}
-        ${st.state !== 'ready' ? `<span class="state ${st.state}">${esc({ loading: t('state_loading'), failed: t('state_failed'), missing: t('state_missing') }[st.state] || '')}</span>` : ''}${ic('chev', 'sm chev')}</button>
+        ${st.state !== 'ready' ? `<span class="state ${st.state}">${esc({ loading: t('state_loading'), failed: t('state_failed'), missing: t('state_missing') }[st.state] || '')}</span>` : ''}${ic('chev', 'sm chev')}</span>
       <span class="spacer"></span>
       <button class="chip${folderName ? ' on' : ' warn'}" id="folderChip" title="${esc(currentFolder() || t('no_folder'))}">${ic('folder', 'sm')}<span class="lbl" dir="auto">${esc(folderName || t('connect_folder'))}</span></button>
       <button class="chip${webOn ? ' on' : internet === 'off' ? ' warn' : ''}" id="webChip" title="${t('web_chip_title')}">${ic(internet === 'off' ? 'off' : 'globe', 'sm')}<span class="lbl">${webOn ? t('web_on') : internet === 'off' ? t('web_off') : t('web_ready')}</span></button>
       <button class="icon-btn" id="langBtn" title="${t('language')}"><b style="font-size:12px">${S.lang === 'fa' ? 'EN' : 'فا'}</b></button>
       <button class="icon-btn" id="themeBtn" title="${t('theme')}">${ic({ system: 'monitor', light: 'sun', dark: 'moon' }[theme])}</button>`;
     $('#showSide').onclick = toggleSide;
-    $('#picker').onclick = e => modelMenu(e.currentTarget);
+    paintPicker();
     $('#folderChip').onclick = e => folderMenu(e.currentTarget);
     $('#webChip').onclick = () => {
       if ((S.status.internet || {}).mode === 'off') {
@@ -570,7 +570,7 @@
     const keys = h(`<button class="item">${ic('key', 'sm')}<span class="grow"><b>${t('online_manage')}</b><small>${t('online_manage_sub')}</small></span></button>`);
     keys.onclick = () => { closePop(); S.settingsTab = 'online'; go('settings'); };
     menu.appendChild(keys);
-    popover(anchor, menu, { width: 340 });
+    popover(anchor, menu, { width: 340, up: !!anchor.closest('.composer'), align: 'end' });
   }
 
   async function useOnline(provider, model) {
@@ -678,15 +678,17 @@
           <div class="attach-list" id="attachList"></div>
           <textarea id="input" rows="1" dir="auto" placeholder="${t('placeholder')}"></textarea>
           <div class="bar">
-            <button type="button" class="tool tools-btn" id="toolsBtn" title="${t('tools_title')}">${ic('sliders', 'sm')}<span class="dot" id="toolsDot"></span></button>
-            <div class="mode" id="modeSeg" role="radiogroup" aria-label="${t('mode_title')}">
+            <button type="button" class="tool tools-btn plus-btn" id="toolsBtn" title="${t('tools_title')}">${ic('plus')}<span class="dot" id="toolsDot"></span></button>
+            <button type="button" class="tool mode-chip" id="modeBtn" title="${t('mode_title')}"></button>
+            <div class="mode" id="modeSeg" hidden role="radiogroup" aria-label="${t('mode_title')}">
               <span class="thumb"></span>
               <button type="button" role="radio" data-m="normal" title="${t('mode_normal')}" aria-label="${t('mode_normal')}">${ic('chat', 'sm')}<span class="lbl">${t('mode_normal')}</span></button>
               <button type="button" role="radio" data-m="plan" title="${t('mode_plan')}" aria-label="${t('mode_plan')}">${ic('plan', 'sm')}<span class="lbl">${t('mode_plan')}</span></button>
               <button type="button" role="radio" data-m="agents" title="${t('mode_agents')}" aria-label="${t('mode_agents')}">${AGENTS_IC}<span class="lbl">${t('mode_agents')}</span></button>
             </div>
-            <button type="button" class="tool web-btn" id="webBtn" title="${t('web_chip_title')}">${ic('globe', 'sm')}</button>
+            <button type="button" class="tool web-btn" id="webBtn" title="${t('web_chip_title')}">${ic('globe', 'sm')}<span class="lbl">${t('web_short')}</span></button>
             <span class="grow"></span>
+            <button type="button" class="tool model-chip" id="picker" aria-haspopup="menu"></button>
             <button type="button" class="ctx" id="ctxBtn" title="${t('ctx_title_short')}">
               <svg viewBox="0 0 36 36" aria-hidden="true">
                 <defs><clipPath id="ctxClip"><circle cx="18" cy="18" r="13"/></clipPath></defs>
@@ -753,6 +755,9 @@
       const thumb = $('.thumb', seg);
       if (on && thumb) { thumb.style.left = on.offsetLeft + 'px'; thumb.style.width = on.offsetWidth + 'px'; }
     });
+    const chip = $('#modeBtn'), cur = $(`button[data-m="${current}"]`, seg);
+    if (chip && cur) chip.innerHTML = cur.innerHTML + ic('chev', 'sm');
+    if (chip) chip.classList.toggle('on', current !== 'normal');
     $('#composer').classList.toggle('planning', S.plan);
     $('#composer').classList.toggle('agenting', current === 'agents');
     $('#input').placeholder = S.plan ? t('placeholder_plan') : current === 'agents' ? t('placeholder_agents') : t('placeholder');
@@ -807,12 +812,32 @@
     popover(anchor, node, { up: true, align: 'end', width: 300 });
   }
 
-  /** The panel behind the tools button: files, skills, and the dials, together. */
+  /** The composer's model chip: a copy of what the top bar knows about the model (name, quant, state). */
+  function paintPicker() {
+    const chip = $('#picker'), src = $('#top .picker-src');
+    if (chip && src) chip.innerHTML = src.innerHTML;
+  }
+
+  /** The mode chip's list: each mode, the current one ticked. */
+  function modeMenu(anchor) {
+    const node = h(`<div class="tools-pop mode-pop"></div>`);
+    $$('#modeSeg button').forEach(b => {
+      const on = b.classList.contains('on');
+      const row = h(`<button type="button" class="item${on ? ' on' : ''}">${b.innerHTML}<span class="grow"></span>${on ? ic('check', 'sm') : ''}</button>`);
+      row.onclick = () => { closePop(); b.click(); };
+      node.appendChild(row);
+    });
+    popover(anchor, node, { up: true, width: 220 });
+  }
+
+  /** The panel behind the "+" button: files, the web, the dials, skills and the conversation's memory. */
   function toolsPanel(anchor) {
     const st = settingsOf();
     const level = st.level || 5, temp = st.temperature || 5;
     const node = h(`<div class="tools-pop">
       <button type="button" class="item" data-a="attach">${ic('clip', 'sm')}<span class="grow"><b>${t('attach_title')}</b><small>${t('attach_sub')}</small></span></button>
+      <button type="button" class="item${$('#webBtn').classList.contains('on') ? ' on' : ''}" data-a="web">${ic('globe', 'sm')}<span class="grow"><b>${t('web_short')}</b></span>${$('#webBtn').classList.contains('on') ? ic('check', 'sm') : ''}</button>
+      <button type="button" class="item" data-a="ctx">${ic('layers', 'sm')}<span class="grow"><b>${t('ctx_head')}</b></span></button>
       <hr>
       ${apex() ? `<div class="dial"><div class="row2"><b>${ic('bulb', 'sm')}${t('level_title')}</b><span class="big" data-v="level">${num(level)}</span></div>
         <input type="range" min="1" max="20" step="1" value="${level}" data-r="level" aria-label="${t('level_title')}">
@@ -850,6 +875,8 @@
       list.appendChild(row);
     }
     $('[data-a=attach]', node).onclick = () => { closePop(); $('#fileInput').click(); };
+    $('[data-a=web]', node).onclick = () => { closePop(); $('#webBtn').click(); };
+    $('[data-a=ctx]', node).onclick = () => { closePop(); contextMenu($('#toolsBtn')); };
     $('[data-a=manage]', node).onclick = () => { closePop(); S.settingsTab = 'skills'; go('settings'); };
     popover(anchor, node, { up: true, width: 330 });
   }
@@ -895,6 +922,9 @@
       if (files.length) { e.preventDefault(); addFiles(files); }
     });
     $('#toolsBtn').onclick = e => toolsPanel(e.currentTarget);
+    $('#modeBtn').onclick = e => modeMenu(e.currentTarget);
+    $('#picker').onclick = e => modelMenu(e.currentTarget);
+    paintPicker();
     $$('#modeSeg button').forEach(b => {
       b.onclick = () => {
         S.plan = b.dataset.m === 'plan';

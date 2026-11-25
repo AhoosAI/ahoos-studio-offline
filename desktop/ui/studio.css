@@ -1221,3 +1221,204 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16p
 .share-box { display: flex; flex-direction: column; gap: 10px; }
 .share-link { font-family: var(--mono); font-size: 12.5px; }
 .share-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ==== 3.6: more alive (2026-11-11) ================================================================
+   Asked: the studios livelier, nothing else changed. Motion only, on transform and opacity: windows,
+   menus and notes arrive with a small spring and leave quickly, buttons give under a press, icons
+   answer the pointer, a finished thing ticks. Colours, words and layout are as they were; all of it
+   stops under the Motion setting and the system's reduced motion (the rules in "motion" above). */
+
+@keyframes modal-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes modal-out { to { opacity: 0; transform: translateY(6px) scale(.98); } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(5px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes pop-out { to { opacity: 0; transform: translateY(3px) scale(.98); } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(8px) scale(.97); } }
+@keyframes view-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes tick-pop { 0% { transform: scale(.6); } 60% { transform: scale(1.16); } 100% { transform: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* -- windows, menus, notes: in with a spring, out quickly ------------------------------------------- */
+.modal { animation: modal-in .3s var(--spring) both; }
+.scrim.closing .modal { animation: modal-out var(--t-fast) var(--ease) both; }
+.palette { animation: modal-in .28s var(--spring) both; }
+.pop { animation: pop-in .22s var(--spring) both; }
+.pop.closing { animation: pop-out var(--t-fast) var(--ease) both; }
+.toast { animation: toast-in .34s var(--spring) both; }
+.toast.out { animation: toast-out var(--t) var(--ease) both; }
+.toast .i { animation: tick-pop .45s var(--spring) .12s both; }
+.item .tick, .mode-card .check { animation: tick-pop .3s var(--spring) both; }
+.pal-item { transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+
+/* -- a page opening: its title, then its cards one after another ------------------------------------ */
+.view.on .page-in > h1, .view.on .page-in > .lead { animation: view-in .4s var(--spring) both; }
+.view.on .sgroup { animation: view-in .45s var(--spring) both; }
+.view.on .sgroup:nth-child(2) { animation-delay: 40ms; }
+.view.on .sgroup:nth-child(3) { animation-delay: 80ms; }
+.view.on .sgroup:nth-child(4) { animation-delay: 120ms; }
+.view.on .sgroup:nth-child(n+5) { animation-delay: 160ms; }
+.vote { animation: view-in .35s var(--spring) both; }
+
+/* -- things that give under a press, and icons that answer the pointer ------------------------------ */
+.btn { transition: background var(--t-fast), border-color var(--t-fast), filter var(--t-fast), transform .2s var(--spring); }
+.btn:active:not(:disabled) { transform: scale(.97); }
+.icon-btn { transition: background var(--t-fast), color var(--t-fast), transform .2s var(--spring); }
+.icon-btn:active { transform: scale(.9); }
+.icon-btn > svg.i { transition: transform .25s var(--spring); }
+.icon-btn:hover > svg.i { transform: scale(1.1); }
+.row .more { transition: opacity var(--t-fast), background var(--t-fast), color var(--t-fast), transform .2s var(--spring); }
+.tool { transition: background var(--t-fast), color var(--t-fast), transform .2s var(--spring); }
+.tool:active { transform: scale(.95); }
+.chip { transition: border-color var(--t-fast), background var(--t-fast), transform .2s var(--spring); }
+.chip:active { transform: scale(.97); }
+.item { transition: background var(--t-fast) var(--ease), transform .2s var(--spring); }
+.item:active:not(:disabled) { transform: scale(.985); }
+.snav button { transition: background var(--t-fast), transform .2s var(--spring); }
+.snav button:active { transform: scale(.97); }
+.nav button > svg.i { transition: transform .25s var(--spring); }
+.nav button:hover > svg.i { transform: scale(1.1); }
+.idea { transition: border-color var(--t-fast), transform .25s var(--spring); }
+.idea:hover { transform: translateY(-1px); }
+.idea:active, .starter:active, .theme-card:active { transform: scale(.98); }
+.mode-card, .prov { transition: border-color var(--t-fast), background var(--t-fast), transform .25s var(--spring); }
+.mode-card:hover, .prov:hover { transform: translateY(-1px); }
+.mode-card:active, .prov:active { transform: scale(.98); }
+.pick { transition: border-color var(--t-fast), background var(--t-fast), transform .2s var(--spring); }
+.pick:active { transform: scale(.99); }
+.proj-pick { transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--spring); }
+.proj-pick:active { transform: scale(.98); }
+.msg .meta button, .code-acts button, .u-acts > button {
+  transition: background var(--t-fast), color var(--t-fast), transform .2s var(--spring); }
+.msg .meta button:active, .code-acts button:active, .u-acts > button:active { transform: scale(.93); }
+.send:hover:not(:disabled):not(.stop) .i { transform: translateY(-1.5px); }
+
+/* the switch: its knob slides (a transform, where it used to move by its offset) */
+.switch::after { transition: transform .26s var(--spring); }
+.switch.on::after { inset-inline-start: 2px; transform: translateX(16px); }
+[dir="rtl"] .switch.on::after { transform: translateX(-16px); }
+
+/* the way down to the newest message: it comes up from under the composer */
+.jump { transform: translateX(-50%) translateY(8px) scale(.9); transition: opacity var(--t), transform .3s var(--spring); }
+.jump.on { transform: translateX(-50%); }
+
+/* -- a finished thing ticks ------------------------------------------------------------------------- */
+.code-acts button.done, .content .table-bar button.done { animation: tick-pop .35s var(--spring); }
+.step[data-status="done"] .step-ico > svg { animation: tick-pop .4s var(--spring) both; }
+.plan-steps li[data-status="done"] .mark { animation: tick-pop .35s var(--spring) both; }
+.lane.won .lane-head .tag { animation: tick-pop .45s var(--spring) both; }
+
+/* -- what unfolds: its inside arrives a moment after --------------------------------------------------- */
+.think[open] > .think-text { animation: fade-in .25s var(--ease) both; }
+.content .part-more[open] > :not(summary), .msg.summary details[open] > .content { animation: view-in .3s var(--spring) both; }
+
+/* -- the mark on an empty page breathes; the rain falls as rain does ---------------------------------- */
+.empty .hero-mark { animation: msg-in .5s var(--spring) both, float 5.5s ease-in-out .6s infinite; }
+.rain i { animation-timing-function: cubic-bezier(.45, 0, .9, .6); }
+
+/* -- narrow windows: the sidebar slides in from the left edge, where it is in both languages ---------- */
+@media (max-width: 980px) {
+  .app .side { transform: translateX(-104%); transition: transform .34s var(--spring), visibility 0s linear .34s; }
+  .app.side-open .side { transform: none; transition: transform .34s var(--spring), visibility 0s; }
+}
+
+/* ===========================================================================================
+   Studio 3 -- calm and glassy (asked 2026-11-25): neutral greys with no hue, one monochrome
+   accent (the text colour itself), large soft corners, and frosted glass on what floats over
+   the page: the top bar, the sidebar, the composer and every pop-over.
+   =========================================================================================== */
+:root {
+  --bg: #ffffff; --panel: #fafafa; --panel-2: #f2f2f2; --panel-3: #e9e9e9; --line: #e6e6e6; --line-2: #d4d4d4;
+  --ink: #0a0a0a; --ink-2: #333333; --muted: #737373; --faint: #a3a3a3;
+  --user-bg: #f2f2f2; --code-bg: #f7f7f7;
+  --accent: #171717; --accent-soft: #efefef; --accent-ink: #0a0a0a;
+  --glass: rgba(250, 250, 250, .72); --glass-line: rgba(0, 0, 0, .08); --glass-blur: saturate(1.6) blur(18px);
+  --pop-shadow: 0 12px 36px rgba(0, 0, 0, .12);
+}
+:root[data-theme="dark"] {
+  --bg: #121212; --panel: #1a1a1a; --panel-2: #242424; --panel-3: #2c2c2c; --line: #2a2a2a; --line-2: #3a3a3a;
+  --ink: #ececec; --ink-2: #cfcfcf; --muted: #a1a1a1; --faint: #6b6b6b;
+  --user-bg: #262626; --code-bg: #0d0d0d; --shadow: none;
+  --accent: #ececec; --accent-soft: #2a2a2a; --accent-ink: #ffffff;
+  --glass: rgba(30, 30, 30, .62); --glass-line: rgba(255, 255, 255, .08); --glass-blur: saturate(1.5) blur(20px);
+  --pop-shadow: 0 16px 40px rgba(0, 0, 0, .55);
+}
+a { color: inherit; text-decoration-color: var(--line-2); text-underline-offset: 3px; }
+.ver { color: var(--muted); background: var(--panel-2); }
+
+/* a faint light behind the page, so the glass has something to frost */
+.main { background:
+  radial-gradient(60% 45% at 50% 108%, color-mix(in srgb, var(--ink) 6%, transparent), transparent 70%),
+  radial-gradient(40% 30% at 85% -5%, color-mix(in srgb, var(--ink) 4%, transparent), transparent 70%), var(--bg); }
+.top { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+       border-bottom-color: transparent; }
+.side { background: color-mix(in srgb, var(--panel) 88%, transparent); -webkit-backdrop-filter: var(--glass-blur);
+        backdrop-filter: var(--glass-blur); border-inline-end-color: var(--glass-line); }
+.pop, .sheet { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+               border-color: var(--glass-line); border-radius: 16px; }
+.pop .item { border-radius: 10px; }
+.pop .item.on { background: var(--panel-2); }
+
+/* the home: the greeting, and nothing else */
+.empty .hero-mark { width: 44px; height: 44px; opacity: .9; }
+.empty h2 { font-size: 26px; font-weight: 560; letter-spacing: -.3px; }
+.empty .caps, .empty .ideas, .empty .starters { display: none; }
+
+/* the composer: one rounded glass box; its tools sit inside, under the text, in three places */
+.composer-wrap { padding: 10px 16px 16px; }
+.composer { border-radius: 26px; background: var(--glass); border-color: var(--glass-line);
+            -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .06); }
+:root[data-theme="dark"] .composer { box-shadow: 0 8px 30px rgba(0, 0, 0, .35); }
+.composer.focus, .composer:focus-within { border-color: var(--line-2); box-shadow: 0 6px 24px rgba(0, 0, 0, .08); }
+.composer.planning, .composer.deeping, .composer.agenting { border-color: var(--line-2); }
+.composer textarea { padding: 16px 20px 6px; }
+.bar { border-top: 0; padding: 6px 10px 10px; gap: 6px; }
+.tool { border-radius: 999px; height: 34px; }
+.plus-btn { width: 34px; padding: 0; justify-content: center; border: 1px solid var(--line); color: var(--ink-2); }
+.plus-btn .i { width: 18px; height: 18px; }
+.mode-chip { gap: 6px; padding: 0 12px; border: 1px solid var(--line); color: var(--ink-2); }
+.mode-chip .chev, .mode-chip svg:last-child { width: 13px; height: 13px; color: var(--muted); }
+.mode-chip.on { background: var(--accent-soft); color: var(--ink); border-color: transparent; }
+.mode-chip svg.i circle { fill: currentColor; stroke: none; }
+.web-btn { display: none; border: 1px solid transparent; }
+.web-btn.on { display: inline-flex; background: var(--accent-soft); color: var(--ink); }
+.ctx:not(.warn):not(.bad) { display: none; }
+.send { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--bg); }
+.send:disabled { opacity: .3; }
+.send.stop { background: var(--ink); color: var(--bg); }
+.composer.typed .send:not(.stop) { transform: none; }
+.composer.focus { box-shadow: 0 6px 24px rgba(0, 0, 0, .08); }
+.mic-btn { width: 34px; padding: 0; justify-content: center; }
+@media (max-width: 480px) { .mode-chip .lbl { display: none; } .web-btn .lbl { display: none; } }
+
+/* messages: the user's own in a soft bubble, the model's on the page itself */
+.new-chat { border-radius: 12px; }
+.msg.user .bubble { border-color: transparent; border-radius: 20px; }
+.empty .sub { display: none; }
+.foot { display: none; }
+
+/* the accent is the text colour now: what stands on it takes the page colour */
+.mode[hidden] { display: none; }
+.new-chat, .btn.primary, .nav button .count, .lane.won .lane-head .tag { color: var(--bg); }
+.new-chat { background: var(--ink); }
+.new-chat kbd { background: transparent; border-color: color-mix(in srgb, var(--bg) 35%, transparent); color: var(--bg); }
+.switch.on::after { background: var(--bg); }
+.seg.think-seg[data-mode="balanced"] button.on { color: var(--bg); }
+
+/* a dial with a slider fits one row: its name, the slider, the number; the description is the tooltip */
+.tools-pop .dial:has(input[type="range"]) { display: grid; grid-template-columns: auto minmax(0, 1fr) 2ch; align-items: center;
+  gap: 12px; padding: 8px 12px; width: auto; }
+.tools-pop .dial:has(input[type="range"]) .row2 { display: contents; }
+.tools-pop .dial:has(input[type="range"]) .row2 b { order: 1; font-weight: 500; font-size: 13px; }
+.tools-pop .dial:has(input[type="range"]) input { order: 2; width: 100%; margin: 0; }
+.tools-pop .dial:has(input[type="range"]) .big { order: 3; font-size: 13px; font-weight: 600; color: var(--ink); text-align: center; }
+.tools-pop .dial:has(input[type="range"]) .say { display: none; }
+
+/* the model picker lives in the composer now, by send */
+.model-chip { max-width: 220px; gap: 6px; padding: 0 10px; color: var(--muted); font-weight: 500; }
+.model-chip .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.model-chip .q { font-size: 10.5px; padding: 0 5px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); display: inline-flex; gap: 3px; align-items: center; }
+.model-chip .q .i { width: 11px; height: 11px; }
+.model-chip .state { font-size: 11px; color: var(--warn); }
+.model-chip:hover { color: var(--ink); }
+@media (max-width: 640px) { .model-chip { max-width: 120px; } .model-chip .q { display: none; } }

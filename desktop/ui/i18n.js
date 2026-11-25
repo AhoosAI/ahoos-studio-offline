@@ -473,6 +473,7 @@ window.I18N = {
   planning_now: { fa: 'در حال نوشتن طرح', en: 'Writing a plan' },
   rethink_words: { fa: 'فکر دوباره · {n} کلمه', en: 'Thought again · {n} words' },
   rethink_live: { fa: 'در حال فکر دوباره · {n} کلمه', en: 'Thinking again · {n} words' },
+  web_short: { fa: 'جستجوی وب', en: 'Web search' },
   ctx_head: { fa: 'حافظهٔ متن مدل', en: 'The model\'s context' },
   ctx_title: { fa: '{used} از {limit} توکن ({pct}٪)', en: '{used} of {limit} tokens ({pct}%)' },
   ctx_title_short: { fa: 'حافظهٔ متن مدل', en: 'The model\'s context' },
